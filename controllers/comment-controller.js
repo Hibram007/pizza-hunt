@@ -22,6 +22,32 @@ const commentController = {
       .catch(err => res.json(err));
   },
 
+  // We are really updating a comment vs. creating a whole new reply file
+  addReply({ params, body }, res) {
+    Comment.findOneAndUpdate(
+      { _id: params.commentId },
+      { $push:{ replies: body } },
+      { new: true }
+    )
+    .then(dbPizzaData => {
+      if (!dbPizzaData) {
+        res.status(404).json({ message: 'No pizza found with this id!' });
+        return;
+      }
+      res.json(dbPizzaData);
+    })
+    .catch(err => res.json(err));
+  },
+  // code to delete a reply from a comment
+  removeReply({ params }, res) {
+    Comment.findOneAndDelete(
+      { _id: params.commentId },
+      {$pull: { replies: {replyId: params.replyId } } },
+      { new: true }
+    )
+    .then(dbPizzaData => res.json(dbPizzaData))
+    .catch(err => res.json(err));
+  },
   // remove comment
   removeComment({ params }, res) {
     Comment.findOneAndDelete({ _id: params.commentId })
