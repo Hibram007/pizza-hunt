@@ -67,6 +67,8 @@ const handlePizzaSubmit = event => {
     })
     .catch(err => {
       console.log(err);
+      // links to offline saving functionality with the indexed Db
+      saveRecord(formData);
     });
 };
 
